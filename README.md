@@ -1,2 +1,2 @@
-# SuperLedgerX
+# SuperKnet
 xCoin Explorer
