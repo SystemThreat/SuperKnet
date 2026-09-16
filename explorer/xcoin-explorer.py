@@ -967,7 +967,22 @@ def api_stats():
         "hrp": CFG["hrp"],
         "levy_bp": LEVY_BP,
         "charter": charter(),
+        "nodes": fleet_status(),
     }
+
+FLEET_FILE = os.environ.get("XCOIN_FLEET", "/etc/xcoin/fleet.json")
+def fleet_status():
+    """The named nodes from fleet.json; one is online if it is us or a connected peer."""
+    try:
+        with open(FLEET_FILE) as f: fleet = json.load(f)
+    except Exception:
+        return {"online": None, "countries": None, "nodes": []}
+    peers = {(p.get("addr") or "").rsplit(":", 1)[0] for p in (rpc("getpeerinfo") or [])}
+    nodes = [{"name": n.get("name"), "city": n.get("city"), "country": n.get("country"),
+              "online": bool(n.get("self")) or n.get("ip") in peers} for n in fleet]
+    up = [n for n in nodes if n["online"]]
+    return {"online": len(up), "total": len(nodes),
+            "countries": len({n["country"] for n in up if n["country"]}), "nodes": nodes}
 
 # ---- Nerd Miner: rig telemetry + address balances (additive, optional) ----
 def _rigs():
