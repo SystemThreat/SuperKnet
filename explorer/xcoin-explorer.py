@@ -855,7 +855,7 @@ def view_overview():
                   f'<td><div class="miner-cell"><b>{esc(r.get("worker") or "default")}</b>'
                   f'<a class="hash" href="/address/{esc(r["address"])}">{short(r["address"],14)}</a></div></td>'
                   f'<td class="num">{(r.get("blocks", 0) or 0):,}</td><td class="num">{(r.get("shares", 0) or 0):,}</td>'
-                  f'<td class="num">{" ".join(hr_fmt((r.get("hashrate_mhs", 0) or 0) * 1e6))}</td><td class="num">{seen}</td></tr>')
+                  f'<td class="num">{" ".join(hr_fmt(r.get("hashrate_hps") if r.get("hashrate_hps") is not None else (r.get("hashrate_mhs", 0) or 0) * 1e6))}</td><td class="num">{seen}</td></tr>')
     prows = prows or '<tr><td colspan=6 class=muted>no rigs yet — yours could be the first</td></tr>'
     if CFG["chain"] == "rehearsal":
         eyebrow = "xCoin · testnet A rehearsal"
